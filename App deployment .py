@@ -1,8 +1,65 @@
-#!/usr/bin/env python
-# coding: utf-8
+%%writefile Customer Segmentation .py 
 
-# In[1]:
+# importing necessary libraries
+
+import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pickle
+from datetime import datetime
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+import joblib
+import pickle
 
 
-get_ipython().run_cell_magic('writefile', 'customer_segmentation_app.py', '\n\n# importing necessary libraries\nimport pickle\nimport streamlit as st\nimport pandas as pd\nimport numpy as np\n\n#load the model\nclassifier = pickle.load(open(\'classifier.pkl\',\'rb\'))\n\n\n#page configuration\nst.set_page_config(page_title = \'Customer Segmentation Web App\', layout=\'centered\')\nst.title(\'Customer Segmentation Web App\')\n\n# customer segmentation function\ndef segment_customers(input_data):\n    \n    prediction=classifier.predict(pd.DataFrame(input_data, columns=[\'Income\',\'Kidhome\',\'Teenhome\',\'Age\',\'Partner\',\'Education_Level\']))\n    print(prediction)\n    pred_1 = 0\n    if prediction == 0:\n            pred_1 = \'cluster 0\'\n\n    elif prediction == 1:\n            pred_1 = \'cluster 1\'\n\n    elif prediction == 2:\n            pred_1 = \'cluster 2\'\n\n    elif prediction == 3:\n            pred_1 = \'cluster 3\'\n\n    return pred_1\n\ndef main():\n    \n    Income = st.text_input("Type In The Household Income")\n    Kidhome = st.radio ( "Select Number Of Kids In Household", (\'0\', \'1\',\'2\') )\n    Teenhome = st.radio ( "Select Number Of Teens In Household", (\'0\', \'1\',\'2\') )\n    Age = st.slider ( "Select Age", 18, 85 )\n    Partner = st.radio ( "Livig With Partner?", (\'Yes\', \'No\') )\n    Education_Level = st.radio ( "Select Education", ("Undergraduate", "Graduate", "Postgraduate") )\n    \n    result = ""\n\n    # when \'Predict\' is clicked, make the prediction and store it\n    if st.button("Segment Customer"):\n        result=segment_customers([[Income,Kidhome,Teenhome,Age,Partner,Education_Level]])\n    \n    st.success(result)\n    \n\nif __name__ == \'__main__\':\n        main ()\n')
+#load the model
+classifier = pickle.load(open('classifier.pkl','rb'))
 
+
+#page configuration
+st.set_page_config(page_title = 'Customer Segmentation Web App', layout='centered')
+st.title('Customer Segmentation Web App')
+
+# customer segmentation function
+def segment_customers(input_data):
+    
+    prediction=classifier.predict(pd.DataFrame(input_data, columns=['Income','Kidhome','Teenhome','Age','Partner','Education_Level']))
+    print(prediction)
+    pred_1 = 0
+    if prediction == 0:
+            pred_1 = 'cluster 0'
+
+    elif prediction == 1:
+            pred_1 = 'cluster 1'
+
+    elif prediction == 2:
+            pred_1 = 'cluster 2'
+
+    elif prediction == 3:
+            pred_1 = 'cluster 3'
+
+    return pred_1
+
+def main():
+    
+    Income = st.text_input("Type In The Household Income")
+    Kidhome = st.radio ( "Select Number Of Kids In Household", ('0', '1','2') )
+    Teenhome = st.radio ( "Select Number Of Teens In Household", ('0', '1','2') )
+    Age = st.slider ( "Select Age", 18, 85 )
+    Partner = st.radio ( "Livig With Partner?", ('Yes', 'No') )
+    Education_Level = st.radio ( "Select Education", ("Undergraduate", "Graduate", "Postgraduate") )
+    
+    result = ""
+
+    # when 'Predict' is clicked, make the prediction and store it
+    if st.button("Segment Customer"):
+        result=segment_customers([[Income,Kidhome,Teenhome,Age,Partner,Education_Level]])
+    
+    st.success(result)
+    
+
+if __name__ == '__main__':
+        main ()
